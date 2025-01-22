@@ -9,6 +9,8 @@ This PHP API is designed to seamlessly interact with AWS S3 or any S3-compatible
 - **Server Flexibility**: Can be deployed on both Windows IIS and Apache servers.
 - **Modern PHP**: Designed to run with PHP version 8.3.
 
+Configure settings by adding custom credentials.json in application folder containing S3 URI and Access Keys.
+
 ## Endpoints
 
 ### 1. List Buckets
