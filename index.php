@@ -23,22 +23,36 @@
     $path = trim($api, '/');
     $parts = explode('/', $path);
   
-    $apiTag = $parts[0];
+    $tag = $parts[0];
     
     include "src/Credentials.php";
     include "src/Router.php";
 
-    if ($apiTag == "" || $apiTag != "api") {
-        if ($apiTag == "") {
+    $credentials = new Credentials();
+    $setAuth = strcmp($tag, "authorisation");
+    
+    if ($tag == "" || $tag != "api") {
+        if ($tag == "") {
             http_response_code(404);
-            exit();
+            exit;
+        } else if ($setAuth === 0) {
+            $credentials->setAuthorisation($params);
+            $result = $credentials->write(); 
+            echo json_encode(["result" => $result]);
+            exit;
         } else {
             http_response_code(404);
-            exit();
+            exit;
         }
     }
-
-    $credentials = new Credentials("credentials.json");
+    
+    if(!$credentials->read("credentials.json")){
+        http_response_code(500);
+        header("Content-Type: application/json");
+        echo json_encode(["error" => "Invalid Credntials Check format"]);
+        exit;
+    }
+    
     $router = new Router($method, $params, $requestBody);
     $router->routeEndpoint($parts, $credentials);
 
