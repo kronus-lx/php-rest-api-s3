@@ -29,13 +29,13 @@
     include "src/Router.php";
 
     $credentials = new Credentials();
-    $setAuth = strcmp($tag, "authorisation");
+    $setAuthentication = strcmp($tag, "authorisation");
     
     if ($tag == "" || $tag != "api") {
         if ($tag == "") {
             http_response_code(404);
             exit;
-        } else if ($setAuth === 0) {
+        } else if ($setAuthentication === 0) {
             $credentials->setAuthorisation($params);
             $result = $credentials->write(); 
             echo json_encode(["result" => $result]);
