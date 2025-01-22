@@ -10,11 +10,10 @@
     $method = $_SERVER["REQUEST_METHOD"];
     $scriptName = dirname($_SERVER["SCRIPT_NAME"]);    
     
-    // Grab Query Strings
-    $parameters = parse_url($url) ?: [];                      // Default to empty array if no parameters are present
-    $queries = $parameters['query'] ?? "";                   // Default to an empty string if no query is present
-    $uri = $parameters['path'] ?? "";                       // Default to uri 
-    $requestBody = file_get_contents('php://input') ?: ""; // Acquire Request Body
+    $parameters = parse_url($url) ?: [];                           // Default to empty array if no parameters are present
+    $queries = $parameters['query'] ?? "";                        // Default to an empty string if no query is present
+    $uri = $parameters['path'] ?? "";                            // Default to uri 
+    $requestBody = file_get_contents('php://input') ?: "";      // Acquire Request Body
 
     $params = [];
 
@@ -24,13 +23,13 @@
     $path = trim($api, '/');
     $parts = explode('/', $path);
   
-    $apiTag = $parts[0]; // Assuming /api/
+    $apiTag = $parts[0];
     
     include "src/Credentials.php";
     include "src/Router.php";
 
     if ($apiTag == "" || $apiTag != "api") {
-        if ($apiTag == "") { // if api is not present reject the request
+        if ($apiTag == "") {
             http_response_code(404);
             exit();
         } else {
@@ -42,6 +41,6 @@
     $credentials = new Credentials("credentials.json");
     $router = new Router($method, $params, $requestBody);
     $router->routeEndpoint($parts, $credentials);
-      
+
     exit;
 ?>

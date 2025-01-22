@@ -56,43 +56,37 @@
         }
 
         public static function postBucket(string $requestBody) : void {
-            
-            
-
-            if(!json_validate($requestBody) || $requestBody === ""){
-                header("Content-Type: application/json");
-                http_response_code(400);
-                echo json_encode(["error" => "Invalid JSON."]);
-                return;
-            }
-
-            $json = json_decode($requestBody, true);
-            $bucket = $json["bucket"] ?? null;
-
-            if($bucket){
-                $result = self::$gateway->createBucket($bucket);
-                
-                header("Content-Type: application/json");
-                
-                if(array_key_exists("error", $result)){
-                    http_response_code(400);
-                    echo json_encode(["error" => $result["error"]]);
+            $body = json_decode($requestBody, true);
+            if($body !== null && is_array($body)){  
+                $json = json_decode($requestBody, true);
+                $bucket = $json["bucket"] ?? null;
+                if($bucket){
+                    $result = self::$gateway->createBucket($bucket);
+                    header("Content-Type: application/json");
+                    
+                    if(array_key_exists("error", $result)){
+                        http_response_code(400);
+                        echo json_encode(["error" => $result["error"]]);
+                    } else {
+                        echo json_encode($result);
+                    }
                 } else {
-                    echo json_encode($result);
+                    header("Content-Type: application/json");
+                    http_response_code(400);
+                    echo json_encode(["error" => "Invalid Schema."]);
+                    return;
                 }
             } else {
                 header("Content-Type: application/json");
                 http_response_code(400);
-                echo json_encode(["error" => "Invalid Schema."]);
+                echo json_encode(["error" => "Invalid JSON."]);
                 return;
             }
             return;
         }
 
         public static function postObject(string $bucketName, string $requestBody, ?array $queries) : void {
-            
             $key = $queries['key'] ?? null;
-
             if($key && $requestBody !== ""){
                 $result = self::$gateway->uploadObject($bucketName, $key, $requestBody);
                 header("Content-Type: application/json");
